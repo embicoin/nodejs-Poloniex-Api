@@ -12,6 +12,8 @@ TODO
 
 please donate
 -------------
+```
 XMR: transfer 3 onemorebtc.k1024.de 1
 XMR: 43GWwwRixsoGssymxxiyBT1mJXSLXgYtnLtHiXi3mBii3neKj3KvrcSGxtsmyp8S2ScnmMXVLEVZ4RZK5BikiE686FuZy9z
 BTC: 1NzpQLGXvMAeHULwMPZjM1gRvn4uwREVqX
+```

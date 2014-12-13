@@ -1,0 +1,25 @@
+{
+    "DEBUG": true,
+    
+    "Web": {
+        "Port": 3000
+    },
+    
+    "Trader": [
+        "Bouncer"
+    ],
+    
+    "Symbols": {
+
+        "Poloniex": {
+            "CurrencyPairs": [["BTC", "XMR"]],
+            "PollTimeout": 5000,
+            "FullOrderbookRefreshTimeout" : 60000,
+            "Start": 1417392000,
+            "Key": "",
+            "Secret": ""
+        }
+
+    }
+
+}

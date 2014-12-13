@@ -1,0 +1,30 @@
+{
+  "name": "Trader",
+  "version": "0.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^0.9.0",
+    "autobahn": "^0.9.5",
+    "blessed": "0.0.37",
+    "cli-color": "^0.3.2",
+    "cli-table": "^0.3.1",
+    "crypto": "0.0.3",
+    "events": "^1.0.2",
+    "express": "^4.10.5",
+    "function-graph": "^0.1.2",
+    "microtime": "^1.0.1",
+    "nconf": "^0.7.1",
+    "node-curl": "^0.3.3",
+    "path": "^0.4.9",
+    "querystring": "^0.2.0",
+    "socket.io": "^1.2.1",
+    "strftime": "^0.8.2",
+    "util": "^0.10.3"
+  }
+}

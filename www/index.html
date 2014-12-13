@@ -1,0 +1,45 @@
+<html>
+
+<head>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <style>
+    </style>
+    <script>
+        
+        var socket = io.connect();
+            
+        socket.on('init', function (data) {
+            d3.select('#balance_btc').text((data.balance.BTC.available + data.balance.BTC.onorders).toFixed(6));
+            d3.select('#balance_xmr').text((data.balance.XMR.available + data.balance.XMR.onorders).toFixed(6));
+            d3.select('#balance_totalbtc').text((data.balance.BTC.available + data.balance.BTC.onorders + data.balance.XMR.btcvalue).toFixed(6));
+        });
+
+        socket.on('balance', function (data) {
+            console.log(data);
+        });
+
+        socket.on('BTC_XMR', function (data) {
+            // console.log('BTC_XMR', data);
+        });
+
+        socket.on('error', function (data) {
+            console.log('ERROR', data);
+        });
+
+    </script>
+
+</head>
+
+<body>
+    
+    <div>
+        BTC: <span id='balance_btc'></span>
+        XMR: <span id='balance_xmr'></span>
+        Total BTC: <span id='balance_totalbtc'></span>
+    </div>
+
+</body>
+
+</html>

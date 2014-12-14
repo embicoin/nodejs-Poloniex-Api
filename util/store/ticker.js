@@ -14,6 +14,37 @@ function Ticker(app, stores, exchange, currencyPair) {
     self._currencyPair = currencyPair;
     self.history = [];
 
+    self._app.exchanges[self._exchange].get_publictradehistory(self._currencyPair, ((Date.now() - 7 * 24 * 60 * 60 * 1000) / 1000), function (err, result) {
+        var tick,
+            i;
+        
+        try {
+            for (i = 0; i < result.length; i++) {
+                tick = {
+                    exchange: self._exchange,
+                    currencyPair: self._currencyPair,
+                    last: parseFloat(result[i].rate),
+                    date: Date.parse(result[i].date),
+                    amount: parseFloat(result[i].amount),
+                    type: result[i].type
+                };
+
+                self.history.push(tick);
+            }
+
+            while (self.history.length > 0 && self.history[0].date < ((Date.now() - 7 * 24 * 60 * 60 * 1000))) {
+                self.history.splice(0, 1);
+            }
+            
+            if (self.history.length > 0) {
+                self._app.stores._emitticker(self.history[self.history.length - 1]);
+            }
+            
+        } catch (e) {
+            self._app.log.error('util/store/ticker', 'get_tradehistory', e);
+        }
+    });
+    
     self._app.exchanges[self._exchange].on('orderbook', function (args) {
         var i,
             tick,
@@ -25,7 +56,7 @@ function Ticker(app, stores, exchange, currencyPair) {
                 if (c.type === 'newTrade') {
                     tick = { exchange: self._exchange, currencyPair: self._currencyPair, last: parseFloat(c.data.rate), date: Date.parse(c.data.date), amount: parseFloat(c.data.amount), type: c.data.type };
 
-                    while (self.history.length > 0 && self.history[0].date > (Date.now() - 24 * 60 * 60 * 1000)) {
+                    while (self.history.length > 0 && self.history[0].date < (Date.now() - 7 * 24 * 60 * 60 * 1000)) {
                         self.history.splice(0, 1);
                     }
 

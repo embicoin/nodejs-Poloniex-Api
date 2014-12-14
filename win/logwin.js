@@ -11,22 +11,23 @@ function LogWin(windows) {
     var self = this;
 
     win.Win.call(this, windows, {
-        top: 7,
+        top: 6,
         bottom: 0,
-        left: 1,
-        width: '100%',
-        height: '100%'
+        left: 0,
+        right: 27,
+        style: { bg: '#191919' }
     },
         'l',
         '(L)og');
     
     self._windows._app._logwin = self;
     self._lines = [];
+    self._width = self._box.width - 50;
 }
 util.inherits(LogWin, win.Win);
 
 LogWin.prototype._print = function (content, obj) {
-    var self = this, i;
+    var self = this, i, d;
     
     if (typeof obj === 'string' || obj instanceof String) {
         content += ' ' + obj.toString();
@@ -36,14 +37,22 @@ LogWin.prototype._print = function (content, obj) {
         
     } else if (Object.prototype.toString.call(obj) === '[object Array]') {
         content += ' [';
-        for (i = 0; i < obj.length; i++) {
-            content += '\r\n #';
-            content = self._print(content, obj[i]);
+        if (obj.length > 0) {
+            for (i = 0; i < obj.length; i++) {
+                content += '\r\n   ';
+                content = self._print(content, obj[i]);
+            }
+            content += '\r\n]';
+        } else {
+            content += ']';
         }
-        content += '\r\n]';
         
     } else {
-        content += ' ' + JSON.stringify(obj);
+        d = JSON.stringify(obj);
+        if (d.length > self._width) {
+            d = '[' + d.length + '] ' + d.substr(0, self._width) + '...';
+        }
+        content += ' ' + d;
     }
     
     return content;
@@ -51,7 +60,13 @@ LogWin.prototype._print = function (content, obj) {
 
 LogWin.prototype.write = function (date, cat, fn, func, obj) {
     var self = this,
-        content = date + ' ' + cat + ' ' + fn + ' ' + func;
+        content = date
+            + ' '
+            + cat
+            + ' '
+            + ('                  ' + fn).slice(-20)
+            + ' '
+            + ('                  ' + func).slice(-18);
     
     content = self._print(content, obj);
     

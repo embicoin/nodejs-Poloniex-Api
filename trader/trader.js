@@ -59,7 +59,7 @@ Trader.prototype._tick = function (args) {
         }
         
         if (!found) {
-            todo.push({ type: 'cancel', orderNumber: ct.orderNumber });
+            todo.push({ type: 'cancel', orderNumber: ct.orderNumber, order: { rate: parseFloat(ct.rate).toFixed(6), amount: parseFloat(ct.amount).toFixed(2), orderNumber: ct.orderNumber }});
         }
     }
     
@@ -93,9 +93,10 @@ Trader.prototype._tick = function (args) {
                 if (item.type === 'cancel') {
                     self._app.exchanges.Poloniex.cancel_order(['BTC', 'XMR'], oin, function (err, result) {
                         if (err !== undefined) {
-                            self._app.log.error('trader/trader', 'CANCEL', err);
+                            self._app.log.error('trader/trader', 'cancel', err);
                         } else {
-                            self._app.log.info('trader/trader', 'CANCEL', oin);
+                            self._app._windows._winHistory.write('cancel', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: oin });
+                            self._app.log.info('trader/trader', 'cancel', oin);
                         }
                         cb(err, result);
                     });
@@ -106,9 +107,10 @@ Trader.prototype._tick = function (args) {
                         self._app.exchanges.Poloniex.sell(['BTC', 'XMR'], item.order.amount, item.order.rate, function (err, result) {
                             target[item.target].orderNumber = result.orderNumber;
                             if (err !== undefined) {
-                                self._app.log.error('trader/trader', 'SELL', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber, error: err });
+                                self._app.log.error('trader/trader', 'sell', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber, error: err });
                             } else {
-                                self._app.log.info('trader/trader', 'SELL', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber });
+                                self._app._windows._winHistory.write('sell', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber });
+                                self._app.log.info('trader/trader', 'sell', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber });
                             }
                             cb(err, result);
                         });
@@ -119,9 +121,10 @@ Trader.prototype._tick = function (args) {
                             target[item.target].orderNumber = result.orderNumber;
 
                             if (err !== undefined) {
-                                self._app.log.error('trader/trader', 'BUY ', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber, error: err });
+                                self._app.log.error('trader/trader', 'buy', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber, error: err });
                             } else {
-                                self._app.log.info('trader/trader', 'BUY ', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber });
+                                self._app._windows._winHistory.write('buy', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber });
+                                self._app.log.info('trader/trader', 'buy', { rate: parseFloat(item.order.rate).toFixed(6), amount: parseFloat(item.order.amount).toFixed(2), orderNumber: result.orderNumber });
                             }
                             cb(err, result);
                         });
@@ -132,9 +135,7 @@ Trader.prototype._tick = function (args) {
                 self._current = target;
                 setTimeout(function () { self._ratelimit = undefined; }, 5000);
                 if (err !== undefined) {
-                    self._app.log.error('trader/trader', 'check.each.todo', err);
-                } else {
-                    self._app.log.info('trader/trader', 'DONE', target);
+                    self._app.log.error('trader/trader', 'Check', err);
                 }
                 self._app.stores.Poloniex._forceOrderUpdate = true;
             });

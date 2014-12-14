@@ -27,12 +27,20 @@ Win.prototype.show = function () {
     
     self.isVisible = true;
     self.hasChanges = false;
+    
+    if (self.onshow !== undefined) {
+        self.onshow();
+    }
 };
 
 Win.prototype.hide = function () {
     var self = this;
     
     self.isVisible = false;
+    
+    if (self.onhide !== undefined) {
+        self.onhide();
+    }
 };
 
 Win.prototype.setContent = function (content) {

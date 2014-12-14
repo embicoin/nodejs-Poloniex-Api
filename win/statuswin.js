@@ -32,6 +32,8 @@ StatusWin.prototype._build = function () {
         total,
         lasthigh = '',
         lastlow = '',
+        lh,
+        ll,
         buys = '',
         sells = '',
         i,
@@ -58,13 +60,15 @@ StatusWin.prototype._build = function () {
             + ('         ' + (self._windows._app.stores.Poloniex.BTC.available + self._windows._app.stores.Poloniex.BTC.onorders + self._windows._app.stores.Poloniex.XMR.btcvalue).toFixed(5)).slice(-8);
         
         for (i = 0; i < self._windows._app.stores.Poloniex.BTC.XMR.ticker.history.length; i++) {
-            if (lasthigh === '' || parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last) > lasthigh) {
+            if (lh === undefined || parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last) > lh) {
+                lh = parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last);
                 lasthigh = ' Last+: '
-                    + clc.bold(parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last));
+                    + clc.bold(parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last).toFixed(6));
             }
-            if (lastlow === '' || parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last) < lastlow) {
+            if (ll === undefined || parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last) < ll) {
+                ll = parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last);
                 lastlow = ' Last-: '
-                    + clc.bold(parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last));
+                    + clc.bold(parseFloat(self._windows._app.stores.Poloniex.BTC.XMR.ticker.history[i].last).toFixed(6));
             }
         }
         

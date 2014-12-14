@@ -15,7 +15,7 @@ Logger.prototype.info = function (fn, func, args) {
     var self = this;
     
     if (self._app._logwin !== undefined) {
-        self._app._logwin.write(new Date().toISOString(), clc.bold.green("INFO"), fn, func, args);
+        self._app._logwin.write(new Date().toISOString(), clc.bold.green("INFO   "), fn, func, args);
     }
 };
 
@@ -23,7 +23,7 @@ Logger.prototype.warn = function (fn, func, args) {
     var self = this;
     
     if (self._app._logwin !== undefined) {
-        self._app._logwin.write(new Date().toISOString(), clc.bold.yellow("WARN"), fn, func, args);
+        self._app._logwin.write(new Date().toISOString(), clc.bold.yellow("WARN   "), fn, func, args);
     }
 };
 
@@ -31,24 +31,21 @@ Logger.prototype.error = function (fn, func, args) {
     var self = this;
     
     if (self._app._logwin !== undefined) {
-        self._app._logwin.write(new Date().toISOString(), clc.bold.red("ERROR"), fn, func, args);
+        self._app._logwin.write(new Date().toISOString(), clc.bold.red("ERROR  "), fn, func, args);
     }
 };
 
 Logger.prototype.time = function () {
-    return function () {};
-    /*
     var self = this,
         start = Date.now();
     
-    return function () {
-        var took = (Date.now() - start),
-            content = new Date().toISOString() + ' ' + clc.bold.blue("TIME") + ' ' + took + 'ms ' + JSON.stringify(arguments);
-        
-        self._app._boxlog.insertLine(0, content.substr(0, self._app._boxlog.width));
-        self._app._screen.render();
+    return function (fn, func, args) {
+        var took = (Date.now() - start);
+
+        if (self._app._logwin !== undefined) {
+            self._app._logwin.write(new Date().toISOString(), clc.bold.blue(('     ' + took).slice(-5) + 'ms'), fn, func, args);
+        }
     };
-    */
 };
 
 module.exports.Logger = Logger;

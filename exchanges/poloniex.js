@@ -53,7 +53,6 @@ Poloniex.prototype.get_orders = function (currencyPair, callback) {
     self._query_tradeApi({ 'command': 'returnOpenOrders', 'currencyPair': cp }, callback);
 };
 
-
 Poloniex.prototype.get_tradehistory = function (currencyPair, start, callback) {
     var self = this,
         cp = 'all';
@@ -63,6 +62,17 @@ Poloniex.prototype.get_tradehistory = function (currencyPair, start, callback) {
     }
     
     self._query_tradeApi({ 'command': 'returnTradeHistory', 'currencyPair': cp, start: start, end: 9999999999 }, callback);
+};
+
+Poloniex.prototype.get_publictradehistory = function (currencyPair, start, callback) {
+    var self = this,
+        cp = 'all';
+    
+    if (currencyPair !== undefined) {
+        cp = currencyPair[0] + '_' + currencyPair[1];
+    }
+    
+    self._query_publicApi({ 'command': 'returnTradeHistory', 'currencyPair': cp, start: start, end: 9999999999 }, callback);
 };
 
 Poloniex.prototype.cancel_order = function (currencyPair, orderNumber, callback) {
@@ -105,23 +115,23 @@ Poloniex.prototype._query_publicApi = function (req, callback) {
             res.on('end', function () {
                 try {
                     var data = JSON.parse(body);
-                    time('exchanges/poloniex', 'Poloniex.prototype._query_publicApi', req, data);
+                    time('exchanges/poloniex', '_query_publicApi', [ req, data ]);
                     callback(undefined, data);
                 } catch (e) {
-                    self._app.log.error('exchanges/poloniex', 'Poloniex.prototype._query_publicApi', e);
-                    time('exchanges/poloniex', 'Poloniex.prototype._query_publicApi', e);
+                    self._app.log.error('exchanges/poloniex', '_query_publicApi', e);
+                    time('exchanges/poloniex', '_query_publicApi', e);
                     callback(e, undefined);
                 }
             });
 
         }).on('error', function (e) {
-            self._app.log.error('exchanges/poloniex', 'Poloniex.prototype._query_publicApi.onerror', e);
-            time('exchanges/poloniex', 'Poloniex.prototype._query_publicApi', e);
+            self._app.log.error('exchanges/poloniex', '_query_publicApi', e);
+            time('exchanges/poloniex', '_query_publicApi', e);
             callback(e, undefined);
         });
     } catch (e) {
-        this._app.log.error('exchanges/poloniex', 'Poloniex.prototype._query_publicApi.onerror', e);
-        time('exchanges/poloniex', 'Poloniex.prototype._query_publicApi', e);
+        this._app.log.error('exchanges/poloniex', '_query_publicApi', e);
+        time('exchanges/poloniex', '_query_publicApi', e);
         callback(e, undefined);
     }
 };
@@ -162,8 +172,8 @@ Poloniex.prototype._query_tradeApi = function (req, callback) {
         });
 
         curl.on('error', function (e) {
-            self._app.log.error('exchanges/poloniex', 'Poloniex.prototype._query_tradeApi.error', e);
-            time('exchanges/poloniex', 'Poloniex.prototype._query_tradeApi.error', req);
+            self._app.log.error('exchanges/poloniex', '_query_tradeApi', e);
+            time('exchanges/poloniex', '_query_tradeApi', req);
             callback(e, undefined);
             curl.close();
         });
@@ -172,12 +182,12 @@ Poloniex.prototype._query_tradeApi = function (req, callback) {
             try {
                 
                 var data = JSON.parse(received);
-                time('exchanges/poloniex', 'Poloniex.prototype._query_tradeApi.end', req);
+                time('exchanges/poloniex', '_query_tradeApi', [ req, data ]);
                 callback(undefined, data);
                 
             } catch (ex) {
-                self._app.log.error('exchanges/poloniex', 'Poloniex.prototype._query_tradeApi.end', ex);
-                time('exchanges/poloniex', 'Poloniex.prototype._query_tradeApi.end', req);
+                self._app.log.error('exchanges/poloniex', '_query_tradeApi', ex);
+                time('exchanges/poloniex', '_query_tradeApi.end', req);
                 callback(ex, received);
             }
 
@@ -187,8 +197,8 @@ Poloniex.prototype._query_tradeApi = function (req, callback) {
         curl.perform();
 
     } catch (ee) {
-        self._app.log.error('exchanges/poloniex', 'Poloniex.prototype._query_tradeApi', ee);
-        time('exchanges/poloniex', 'Poloniex.prototype._query_tradeApi', req);
+        self._app.log.error('exchanges/poloniex', '_query_tradeApi', ee);
+        time('exchanges/poloniex', '_query_tradeApi', req);
         callback(ee, received);
     }
 
@@ -204,11 +214,11 @@ Poloniex.prototype._connect = function () {
             realm: "realm1"
         });
     
-    self._app.log.info('exchanges/poloniex', 'Poloniex.prototype._connect', wsuri, 'connecting');
+    self._app.log.info('exchanges/poloniex', '_connect', wsuri);
     
     connection.onopen = function (session) {
         
-        time('exchanges/poloniex', 'Poloniex.prototype._connect', wsuri, 'connected');
+        time('exchanges/poloniex', '_connect', wsuri);
         
         if (currencyPairs !== undefined && currencyPairs.length > 0) {
             async.each(currencyPairs, function (currencyPair, callback) {

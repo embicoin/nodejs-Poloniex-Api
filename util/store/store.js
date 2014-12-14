@@ -45,7 +45,7 @@ function Store(app, stores, exchange) {
                 return;
             }
             
-            if (/*result.updateorders || */self._forceOrderUpdate) {
+            if (self._forceOrderUpdate) {
                 self._forceOrderUpdate = false;
                 upd.push(function (cb) { self._updateorders(cb); });
             }
